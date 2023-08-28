@@ -1,5 +1,7 @@
-import { Formik, Field, Form, ErrorMessage } from "formik";
+import { Formik, Field } from "formik";
+import PropTypes from 'prop-types';
 import * as Yup from 'yup';
+import { Label, StyledForm, Button, ErrorMsg } from "./ContactForm.styled";
 
 const ContactSchema = Yup.object().shape({
     name: Yup.string()
@@ -7,7 +9,7 @@ const ContactSchema = Yup.object().shape({
         .required('Required'),
     number: Yup.number()
         .min(5, 'Too Short!')
-        .positive('Must be positive!')
+        .positive()
         .required('Required'),
 })
 
@@ -23,18 +25,22 @@ export const ContactForm = ({ onAdd }) => {
                 }
                 }
             >
-                <Form>
-                    <label>Name
+                <StyledForm>
+                    <Label>Name
                         <Field name="name" type="text" />
-                        <ErrorMessage name="name" />
-                    </label>
-                    <label>Number
+                        <ErrorMsg name="name" component="div" />
+                    </Label>
+                    <Label>Number
                         <Field name="number" type="tel" />
-                        <ErrorMessage name="number" />
-                    </label>
-                    <button type="submit">Submit</button>
-                </Form>
+                        <ErrorMsg name="number" component="div" />
+                    </Label>
+                    <Button type="submit">Add contact</Button>
+                </StyledForm>
             </Formik>
         </div>
     );
 };
+
+ContactForm.propTypes = {
+    onAdd: PropTypes.func.isRequired,
+}

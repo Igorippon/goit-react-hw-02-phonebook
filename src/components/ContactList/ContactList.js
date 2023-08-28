@@ -1,13 +1,21 @@
+import { Item, List, Button } from "./ContactList.styled";
+import PropTypes from 'prop-types';
+
 export const ContactList = ({ onDelete, visibilContact }) => {
     return (
-        <ul>
+        <List>
             {visibilContact.map(({ name, id, number }) => (
-                <li key={id}>
+                <Item key={id}>
                     <p>{name} : {number}</p>
-                    <button type="button" onClick={() => onDelete(id)}>delete</button>
-                </li>
+                    <Button type="button" onClick={() => onDelete(id)}>Delete</Button>
+                </Item>
 
             ))}
-        </ul>
+        </List>
     );
 };
+
+ContactList.propTypes = {
+    onDelete: PropTypes.func.isRequired,
+    visibilContact: PropTypes.array.isRequired,
+}
