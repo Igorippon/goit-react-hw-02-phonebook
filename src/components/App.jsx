@@ -4,9 +4,7 @@ import { Layuot } from "./Layout";
 import { nanoid } from 'nanoid';
 import { Filter } from "./Filter/Filter";
 import { ContactForm } from "./ContactForm/ContactForm.js";
-
-
-
+import { ContactList } from "./ContactList/ContactList.js";
 
 export class App extends Component {
   state = {
@@ -20,10 +18,22 @@ export class App extends Component {
   };
 
   addContact = newContact => {
+    console.log(this.state.contacts)
+    const contactName = this.state.contacts.some(contact => contact.name.toLowerCase() === newContact.name.toLowerCase());
+    if (contactName) {
+      alert(`${newContact.name} already exists.`)
+      return
+    }
     this.setState(prevState => ({
       contacts: [{ id: nanoid(), ...newContact }, ...prevState.contacts],
     })
     );
+  };
+
+  deleteContact = contactId => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
+    }))
   };
 
   handleChange = evt => {
@@ -31,31 +41,11 @@ export class App extends Component {
     this.setState({ [name]: value })
   };
 
-  // handleSubmit = evt => {
-  //   evt.preventDefault();
-  //   const { name, number } = evt.currentTarget;
-  //   const contact = {
-  //     name: name.value,
-  //     number: number.value,
-  //     id: nanoid(),
-  //   };
-  //   this.setState(({ contacts }) => ({
-  //     contacts: [contact, ...contacts],
-  //   })
-
-  //   );
-  //   this.reset();
-  // };
-
-  // reset = () => {
-  //   this.setState({ name: '', number: '' })
-  // };
-
   getVisibilContact = () => {
     const { contacts, filter } = this.state;
     const normolizedFilter = filter.toLowerCase();
     return contacts.filter(contact => contact.name.toLowerCase().includes(normolizedFilter));
-  }
+  };
 
   render() {
     const { filter } = this.state;
@@ -63,37 +53,18 @@ export class App extends Component {
 
     return (
       <Layuot>
+        <h1>Phonebook</h1>
         <ContactForm onAdd={this.addContact} />
-        {/* <form onSubmit={this.handleSubmit}>
-          <label>Name
-            <input type="text"
-              name="name"
-              pattern="^[a-zA-Zа-яА-Я]+(([' \-][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-              title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-              required value={name} onChange={this.handleChange} />
-          </label>
-          <label>Number
-            <input type="tel"
-              name="number"
-              pattern="\+?\d{1,4}?[ .\-\s]?\(?\d{1,3}?\)?[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,4}[ .\-\s]?\d{1,9}"
-              title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-              required value={number} onChange={this.handleChange} />
-          </label>
-          <button type="submit">Add contact</button>
-        </form> */}
-        <h3>Contacts</h3>
+        <h2>Contacts</h2>
         <Filter value={filter}
-          onChange={this.handleChange} />
-        <ul>
-          {
-            visibilContact.map(({ name, id, number }) => (
-              <li key={id}>{name} : {number}</li>
-            ))
-          }
-        </ul>
+          onChange={this.handleChange}
+        />
+        <ContactList
+          visibilContact={visibilContact}
+          onDelete={this.deleteContact}
+        />
         <GlobalStyle />
       </Layuot>
     );
   }
-
 };
